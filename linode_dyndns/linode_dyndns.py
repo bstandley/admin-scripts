@@ -31,7 +31,10 @@ def lookup (ipv6=False) :
 	c.setopt(c.URL, conf_ip_url)
 	c.setopt(c.IPRESOLVE, c.IPRESOLVE_V6 if ipv6 else c.IPRESOLVE_V4)
 	c.setopt(c.WRITEDATA, buf)
-	c.perform()
+	try :
+		c.perform()
+	except pycurl.error as e :
+		return False
 	res_code = c.getinfo(c.RESPONSE_CODE)
 	c.close()
 
@@ -81,8 +84,8 @@ if __name__ == "__main__" :
 	ip_addr_4 = lookup(ipv6=False)
 	ip_addr_6 = lookup(ipv6=True)
 
-	print('Lookup IPv4: ' + ip_addr_4 if ip_addr_4 else '?')
-	print('Lookup IPv6: ' + ip_addr_6 if ip_addr_6 else '?')
+	print('Lookup IPv4: ' + (ip_addr_4 if ip_addr_4 else '?'))
+	print('Lookup IPv6: ' + (ip_addr_6 if ip_addr_6 else '?'))
 
 	if ip_addr_4 :
 		ok = update(conf_domain_id, conf_resource_id_4, ip_addr_4)
